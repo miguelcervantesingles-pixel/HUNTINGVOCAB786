@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HUNTING VOCAB BY TEACHER LIZBETH 6TH GRADE</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+body{
+  background:linear-gradient(135deg,#0a0a2e 0%,#1a0a3e 50%,#0d0d35 100%);
+  display:flex;flex-direction:column;align-items:center;overflow:hidden;position:relative;
+  user-select:none;-webkit-user-select:none
+}
+
+/* FLOATING BOMBS */
+.bomb-float{
+  position:fixed;pointer-events:none;z-index:0;font-size:28px;opacity:0.4;
+  animation:bombFloat linear infinite;will-change:transform
+}
+@keyframes bombFloat{
+  0%{transform:translateY(110vh) translateX(0) rotate(0deg);opacity:0}
+  10%{opacity:0.5}
+  90%{opacity:0.5}
+  100%{transform:translateY(-10vh) translateX(60px) rotate(720deg);opacity:0}
+}
+.bomb-float:nth-child(odd){animation-duration:18s}
+.bomb-float:nth-child(even){animation-duration:25s}
+.bomb-float:nth-child(3n){animation-duration:30s;font-size:22px}
+.bomb-float:nth-child(5n){font-size:36px;animation-duration:20s}
+
+/* TITLE */
+.title-container{
+  position:relative;z-index:10;text-align:center;padding:6px 10px 3px;width:100%;
+  background:rgba(0,0,0,0.3);backdrop-filter:blur(4px);flex-shrink:0
+}
+.title-row{
+  font-size:clamp(14px,3vw,42px);font-weight:900;letter-spacing:1px;
+  text-shadow:0 0 20px rgba(255,255,255,0.2),0 2px 4px rgba(0,0,0,0.5);
+  line-height:1.2;word-break:break-word
+}
+.title-row span{display:inline-block;text-shadow:0 0 15px currentColor,0 2px 4px #000}
+
+/* SCOREBOARD */
+.scoreboard{
+  position:relative;z-index:10;display:flex;justify-content:center;gap:clamp(4px,1vw,16px);
+  padding:4px 10px;width:100%;flex-wrap:wrap;flex-shrink:0;
+  background:rgba(0,0,0,0.2);backdrop-filter:blur(2px)
+}
+.score-item{
+  display:flex;align-items:center;gap:4px;
+  background:rgba(255,255,255,0.08);border-radius:8px;padding:3px 8px;
+  border:2px solid rgba(255,255,255,0.1);min-width:90px;justify-content:center
+}
+.score-label{
+  font-size:clamp(10px,1.2vw,16px);font-weight:700;color:#ffd700;
+  text-shadow:0 0 8px rgba(255,215,0,0.4)
+}
+.score-num{
+  font-size:clamp(16px,2vw,28px);font-weight:900;color:#fff;min-width:24px;text-align:center
+}
+.plus-btn{
+  width:clamp(24px,2.8vw,40px);height:clamp(24px,2.8vw,40px);border:none;border-radius:50%;
+  background:linear-gradient(135deg,#00c853,#009624);color:#fff;
+  font-size:clamp(16px,2vw,26px);font-weight:700;cursor:pointer;
+  transition:all 0.15s;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 12px rgba(0,200,83,0.4);line-height:1
+}
+.plus-btn:active{transform:scale(0.85);background:linear-gradient(135deg,#009624,#00691a)}
+.plus-btn:hover{transform:scale(1.1)}
+
+/* GAME AREA */
+.game-wrapper{
+  position:relative;z-index:5;flex:1;width:100%;
+  min-height:0;overflow:hidden
+}
+.cards-container{
+  position:absolute;inset:0;width:100%;height:100%
+}
+.card{
+  position:absolute;z-index:5;
+  width:clamp(70px,13vw,160px);height:clamp(70px,13vw,160px);
+  border-radius:14px;
+  background:linear-gradient(145deg,rgba(255,255,255,0.13),rgba(255,255,255,0.05));
+  border:2.5px solid rgba(255,255,255,0.2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;padding:6px 4px;gap:2px;
+  box-shadow:0 6px 25px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);
+  transform:translate(-50%,-50%) rotate(var(--rot,0deg));
+  transition:left 0.12s ease, top 0.12s ease, transform 0.1s
+}
+.card:hover{z-index:20;transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1.08);border-color:rgba(255,255,255,0.5)}
+.card:active{transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(0.92)}
+.card .emoji{font-size:clamp(28px,5vw,64px);line-height:1}
+.card .cname{
+  font-size:clamp(8px,1vw,14px);color:rgba(255,255,255,0.9);font-weight:600;
+  text-align:center;line-height:1.1;word-break:break-word;text-shadow:0 1px 3px rgba(0,0,0,0.5)
+}
+.card.correct{
+  border-color:#00e676 !important;background:rgba(0,230,118,0.3) !important;
+  box-shadow:0 0 40px rgba(0,230,118,0.6),0 6px 25px rgba(0,0,0,0.4) !important;
+  z-index:30 !important;transform:translate(-50%,-50%) rotate(0deg) scale(1.1) !important
+}
+.card.wrong{
+  animation:shake 0.4s;border-color:#ff1744 !important;
+  background:rgba(255,23,68,0.25) !important
+}
+.card.disabled{pointer-events:none;opacity:0.45}
+@keyframes shake{
+  0%,100%{transform:translate(-50%,-50%) rotate(var(--rot,0deg))}
+  20%{transform:translate(calc(-50% - 10px),-50%) rotate(var(--rot,0deg))}
+  40%{transform:translate(calc(-50% + 10px),-50%) rotate(var(--rot,0deg))}
+  60%{transform:translate(calc(-50% - 7px),-50%) rotate(var(--rot,0deg))}
+  80%{transform:translate(calc(-50% + 7px),-50%) rotate(var(--rot,0deg))}
+}
+
+/* BOTTOM BAR */
+.bottom-bar{
+  position:relative;z-index:10;display:flex;align-items:center;justify-content:center;
+  gap:clamp(12px,3vw,40px);width:100%;padding:5px 12px 7px;flex-shrink:0;
+  background:rgba(0,0,0,0.35);backdrop-filter:blur(4px);flex-wrap:wrap
+}
+.target-display{
+  display:flex;align-items:center;gap:10px
+}
+.target-display .label{
+  font-size:clamp(14px,2.2vw,32px);font-weight:700;color:#ffab00;
+  text-shadow:0 0 20px rgba(255,171,0,0.4)
+}
+.target-display .name{
+  font-size:clamp(20px,3.2vw,48px);font-weight:900;color:#fff;
+  text-shadow:0 0 25px rgba(255,255,255,0.5),0 0 50px rgba(255,255,255,0.2);
+  letter-spacing:1px
+}
+
+/* BOMB */
+.bomb-area{
+  display:flex;align-items:center;gap:8px;
+  padding:3px 16px;border-radius:30px;
+  background:rgba(0,0,0,0.4);border:2px solid rgba(255,255,255,0.1)
+}
+.bomb-icon{font-size:clamp(20px,2.8vw,40px);animation:bombPulse 1s infinite}
+@keyframes bombPulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.1)}
+}
+.bomb-timer{
+  font-size:clamp(20px,3vw,44px);font-weight:900;min-width:32px;text-align:center;
+  transition:color 0.3s
+}
+.bomb-timer.safe{color:#4caf50}
+.bomb-timer.warn{color:#ffeb3b}
+.bomb-timer.danger{color:#f44336;animation:bombDanger 0.3s infinite}
+@keyframes bombDanger{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.2);text-shadow:0 0 30px #f44336}
+}
+
+/* ROUND INFO */
+.round-info{
+  position:absolute;top:4px;left:50%;transform:translateX(-50%);z-index:30;
+  font-size:clamp(10px,1.2vw,18px);color:rgba(255,255,255,0.5);
+  font-weight:600;pointer-events:none;white-space:nowrap
+}
+
+/* OVERLAY */
+.overlay{
+  position:fixed;inset:0;z-index:100;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);flex-direction:column;
+  gap:20px;text-align:center;padding:20px
+}
+.overlay.show{display:flex}
+.overlay h1{
+  font-size:clamp(28px,6vw,80px);font-weight:900;color:#fff;
+  text-shadow:0 0 40px rgba(255,255,255,0.3)
+}
+.overlay h2{
+  font-size:clamp(18px,3vw,48px);font-weight:700;color:#ffd700
+}
+.overlay p{
+  font-size:clamp(14px,2vw,32px);color:rgba(255,255,255,0.8);max-width:600px
+}
+.overlay .btn{
+  padding:16px 48px;font-size:clamp(18px,2.5vw,36px);font-weight:700;
+  border:none;border-radius:16px;cursor:pointer;
+  background:linear-gradient(135deg,#ff6f00,#ff9100);
+  color:#fff;box-shadow:0 0 30px rgba(255,111,0,0.5);
+  transition:all 0.2s
+}
+.overlay .btn:hover{transform:scale(1.05);box-shadow:0 0 50px rgba(255,111,0,0.7)}
+.overlay .btn:active{transform:scale(0.95)}
+
+/* EXPLOSION */
+.explosion-overlay{
+  position:fixed;inset:0;z-index:200;
+  display:none;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,200,0,0.6),rgba(255,50,0,0.4),transparent);
+  animation:explodeFlash 0.8s forwards
+}
+.explosion-overlay.show{display:block}
+@keyframes explodeFlash{
+  0%{opacity:1;transform:scale(1)}
+  50%{opacity:0.8;transform:scale(2)}
+  100%{opacity:0;transform:scale(3)}
+}
+.particle-container{
+  position:fixed;inset:0;z-index:150;pointer-events:none
+}
+.particle{
+  position:absolute;border-radius:50%;animation:particleFly 0.8s forwards
+}
+@keyframes particleFly{
+  0%{opacity:1}
+  100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)}
+}
+
+/* REVEAL OVERLAY HINT */
+.reveal-hint{
+  position:absolute;top:50%;left:50%;z-index:40;
+  transform:translate(-50%,-50%);
+  font-size:clamp(18px,3vw,44px);font-weight:900;color:#fff;
+  text-shadow:0 0 40px rgba(255,255,255,0.4);
+  pointer-events:none;opacity:0;transition:opacity 0.5s;
+  text-align:center;line-height:1.3
+}
+.reveal-hint.show{opacity:1}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .card{width:clamp(60px,16vw,130px);height:clamp(60px,16vw,130px)}
+  .card .emoji{font-size:clamp(22px,6vw,48px)}
+  .score-item{min-width:70px;padding:2px 6px}
+  .bottom-bar{gap:10px}
+}
+@media(max-width:600px){
+  .card{width:clamp(50px,20vw,110px);height:clamp(50px,20vw,110px);border-radius:10px}
+  .card .emoji{font-size:clamp(20px,7vw,40px)}
+  .card .cname{font-size:clamp(6px,2vw,10px)}
+  .score-item{min-width:55px;gap:2px}
+  .score-label{font-size:9px}
+  .score-num{font-size:14px;min-width:18px}
+  .plus-btn{width:22px;height:22px;font-size:14px}
+  .bottom-bar{gap:6px}
+  .target-display .name{font-size:clamp(16px,4.5vw,28px)}
+  .target-display .label{font-size:clamp(11px,3vw,20px)}
+}
+@media(max-width:420px){
+  .card{width:clamp(44px,22vw,90px);height:clamp(44px,22vw,90px);border-radius:8px;border-width:1.5px}
+  .card .emoji{font-size:clamp(18px,8vw,34px)}
+  .card .cname{font-size:5px}
+  .title-row{font-size:12px;letter-spacing:0}
+  .plus-btn{width:20px;height:20px;font-size:12px}
+  .bomb-timer{font-size:16px;min-width:24px}
+}
+</style>
+</head>
+<body>
+
+<div id="floatingBombs"></div>
+
+<div class="title-container">
+  <div class="title-row" id="titleRow">HUNTING VOCAB BY TEACHER LIZBETH 6TH GRADE</div>
+</div>
+
+<div class="scoreboard">
+  <div class="score-item"><span class="score-label">🏆 ROW 1</span><span class="score-num" id="score-0">0</span><button class="plus-btn" data-row="0">+</button></div>
+  <div class="score-item"><span class="score-label">🏆 ROW 2</span><span class="score-num" id="score-1">0</span><button class="plus-btn" data-row="1">+</button></div>
+  <div class="score-item"><span class="score-label">🏆 ROW 3</span><span class="score-num" id="score-2">0</span><button class="plus-btn" data-row="2">+</button></div>
+  <div class="score-item"><span class="score-label">🏆 ROW 4</span><span class="score-num" id="score-3">0</span><button class="plus-btn" data-row="3">+</button></div>
+</div>
+
+<div class="game-wrapper">
+  <div class="round-info" id="roundInfo">Set 1 / Round 1</div>
+  <div class="reveal-hint" id="revealHint">👀 Look at the pictures!</div>
+  <div class="cards-container" id="cardsContainer"></div>
+</div>
+
+<div class="bottom-bar">
+  <div class="target-display" id="targetDisplay">
+    <span class="label">🔍 FIND:</span>
+    <span class="name" id="targetName">—</span>
+  </div>
+  <div class="bomb-area" id="bombArea">
+    <span class="bomb-icon">💣</span>
+    <span class="bomb-timer safe" id="bombTimer">20</span>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <h1 id="overlayTitle">🔦 HUNTING VOCAB</h1>
+  <h2 id="overlaySub">BY TEACHER LIZBETH — 6TH GRADE</h2>
+  <p id="overlayDesc">Look at the pictures carefully!<br>Then find the correct one before the bomb explodes!</p>
+  <button class="btn" id="overlayBtn">🎯 START GAME</button>
+</div>
+
+<div class="explosion-overlay" id="explosionOverlay"></div>
+<div class="particle-container" id="particleContainer"></div>
+
+<script>
+// ===== CONCEPTS =====
+const CONCEPTS = [
+  {name:"Science Fiction Movie",emoji:"🛸"},
+  {name:"Superhero Movie",emoji:"🦸"},
+  {name:"Documentary",emoji:"📽️"},
+  {name:"Comedy",emoji:"😂"},
+  {name:"Adventure Movie",emoji:"🗺️"},
+  {name:"Musical",emoji:"🎵"},
+  {name:"Drama",emoji:"🎭"},
+  {name:"Mystery",emoji:"🔍"},
+  {name:"Interesting",emoji:"💡"},
+  {name:"Frightening",emoji:"😱"},
+  {name:"Excellent",emoji:"🌟"},
+  {name:"Surprising",emoji:"😲"},
+  {name:"Unusual",emoji:"🌀"},
+  {name:"Silly",emoji:"🤪"},
+  {name:"Yearbook",emoji:"📖"},
+  {name:"Graduation Ceremony",emoji:"🎓"},
+  {name:"Win Award",emoji:"🏆"},
+  {name:"Get Certificate",emoji:"📜"},
+  {name:"Pass Final Exam",emoji:"✅📝"},
+  {name:"School Sweatshirt",emoji:"👕"},
+  {name:"End of Year Party",emoji:"🎉"},
+  {name:"Work Hard",emoji:"💪"},
+  {name:"Bored",emoji:"😑"},
+  {name:"Interested",emoji:"🧐"},
+  {name:"Lonely",emoji:"😔"},
+  {name:"Worried",emoji:"😟"},
+  {name:"Pleased",emoji:"😊"},
+  {name:"Brave",emoji:"🦁"},
+  {name:"Proud",emoji:"🏅"}
+];
+const SETS = [
+  [0,1,2,3,4,5],[6,7,8,9,10,11],[12,13,14,15,16,17],
+  [18,19,20,21,22,23],[24,25,26,27,28]
+];
+// ===== STATE =====
+const state = {
+  currentSet:0,targetedInSet:[],currentTarget:null,displayOrder:[],
+  scores:[0,0,0,0],phase:'idle',timer:null,shuffleTimer:null,revealTimer:null,timeLeft:20,
+  currentRound:0,maxRounds:0,setRound:0
+};
+let cardEls = {};
+
+// ===== DOM REFS =====
+const $ = id=>document.getElementById(id);
+const cardsContainer=$('cardsContainer'),overlay=$('overlay'),
+      overlayTitle=$('overlayTitle'),overlaySub=$('overlaySub'),
+      overlayDesc=$('overlayDesc'),overlayBtn=$('overlayBtn'),
+      targetName=$('targetName'),bombTimer=$('bombTimer'),
+      roundInfo=$('roundInfo'),revealHint=$('revealHint'),
+      explosionOverlay=$('explosionOverlay'),particleContainer=$('particleContainer');
+
+// ===== AUDIO =====
+let audioCtx=null;
+function getAudioCtx(){
+  if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+function playExplosion(){
+  try{
+    const ctx=getAudioCtx(),duration=0.8,sr=ctx.sampleRate,
+          buf=ctx.createBuffer(1,sr*duration,sr),d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++){let t=i/sr;d[i]=(Math.random()*2-1)*Math.exp(-t*5)*(1-Math.exp(-t*50))*0.7}
+    const src=ctx.createBufferSource(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
+    src.buffer=buf;filter.type='lowpass';
+    filter.frequency.setValueAtTime(1200,ctx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(40,ctx.currentTime+duration);
+    gain.gain.setValueAtTime(0.7,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+duration);
+    src.connect(filter);filter.connect(gain);gain.connect(ctx.destination);src.start();
+  }catch(e){}
+}
+function playCorrect(){
+  try{
+    const ctx=getAudioCtx(),gain=ctx.createGain();
+    gain.gain.setValueAtTime(0.25,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.6);
+    [523,659,784,1047].forEach((f,i)=>{
+      const o=ctx.createOscillator();o.type='sine';
+      o.frequency.setValueAtTime(f,ctx.currentTime+i*0.12);
+      o.connect(gain);gain.connect(ctx.destination);
+      o.start(ctx.currentTime+i*0.12);o.stop(ctx.currentTime+i*0.12+0.15);
+    });
+  }catch(e){}
+}
+function playTick(){
+  try{
+    const ctx=getAudioCtx(),o=ctx.createOscillator(),g=ctx.createGain();
+    o.type='sine';o.frequency.setValueAtTime(880,ctx.currentTime);
+    g.gain.setValueAtTime(0.1,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
+    o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.08);
+  }catch(e){}
+}
+function playWrong(){
+  try{
+    const ctx=getAudioCtx(),o=ctx.createOscillator(),g=ctx.createGain();
+    o.type='sawtooth';o.frequency.setValueAtTime(180,ctx.currentTime);
+    g.gain.setValueAtTime(0.12,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.25);
+    o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.25);
+  }catch(e){}
+}
+
+// ===== FLOATING BOMBS =====
+(function(){
+  const c=$('floatingBombs');
+  for(let i=0;i<18;i++){
+    const b=document.createElement('div');b.className='bomb-float';
+    b.textContent='💣';
+    b.style.left=Math.random()*100+'%';
+    b.style.animationDelay=Math.random()*25+'s';
+    b.style.fontSize=(18+Math.random()*24)+'px';
+    c.appendChild(b);
+  }
+})();
+
+// ===== TITLE COLORS =====
+(function(){
+  const el=$('titleRow');const t=el.textContent;el.innerHTML='';
+  const colors=['#ff1744','#ff9100','#ffea00','#00e676','#00b0ff','#d500f9','#ff6d00','#00bfa5','#aa00ff','#f50057','#ffab00','#1de9b6','#448aff','#e040fb','#ff5722'];
+  let ci=0;
+  [...t].forEach(c=>{
+    const s=document.createElement('span');
+    if(c===' ')s.innerHTML='&nbsp;';else s.textContent=c;
+    s.style.color=colors[ci%colors.length];ci++;el.appendChild(s);
+  });
+})();
+
+// ===== HELPERS =====
+function shuffleArr(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a}
+
+function getSetIndices(si){return SETS[si]||[]}
+
+function calcMaxRounds(){
+  let t=0;for(let i=0;i<SETS.length;i++)t+=SETS[i].length;return t
+}
+
+// ===== CARD POSITIONING =====
+function genPositions(count){
+  const ps=[],m=6,minD=24;
+  for(let i=0;i<count;i++){
+    let att=0,p;
+    do{
+      p={l:m+Math.random()*(100-2*m),t:m+Math.random()*(100-2*m)};att++;
+    }while(att<80&&ps.some(q=>Math.hypot(q.l-p.l,q.t-p.t)<minD));
+    ps.push(p);
+  }
+  return ps;
+}
+
+function createCards(){
+  cardEls={};cardsContainer.innerHTML='';
+  const ps=genPositions(state.displayOrder.length);
+  state.displayOrder.forEach((ci,i)=>{
+    const c=CONCEPTS[ci];
+    const el=document.createElement('div');
+    el.className='card';el.dataset.concept=ci;
+    el.innerHTML=`<div class="emoji">${c.emoji}</div><div class="cname">${c.name}</div>`;
+    el.style.left=ps[i].l+'%';el.style.top=ps[i].t+'%';
+    el.style.setProperty('--rot',(Math.random()*10-5)+'deg');
+    el.addEventListener('click',()=>cardClicked(ci,el));
+    cardEls[ci]=el;cardsContainer.appendChild(el);
+  });
+}
+
+function repositionCards(){
+  const ps=genPositions(state.displayOrder.length);
+  state.displayOrder.forEach((ci,i)=>{
+    const el=cardEls[ci];
+    if(el){el.style.left=ps[i].l+'%';el.style.top=ps[i].t+'%';
+    el.style.setProperty('--rot',(Math.random()*10-5)+'deg');}
+  });
+}
+
+// ===== GAME LOGIC =====
+function startRound(){
+  const indices=getSetIndices(state.currentSet);
+  const notTargeted=indices.filter(i=>!state.targetedInSet.includes(i));
+  if(notTargeted.length===0){
+    state.targetedInSet=[];
+    state.setRound=0;
+    const all=indices.filter(i=>true);
+    pickTarget(all);
+  } else {
+    pickTarget(notTargeted);
+  }
+}
+function pickTarget(avail){
+  const prev=state.currentTarget;
+  let pick;
+  do{pick=avail[Math.floor(Math.random()*avail.length)];}while(pick===prev&&avail.length>1);
+  state.currentTarget=pick;
+  state.setRound++;state.currentRound++;
+  state.phase='reveal';state.timeLeft=20;
+  state.displayOrder=[...getSetIndices(state.currentSet)].sort(()=>Math.random()-0.5);
+  roundInfo.textContent=`Set ${state.currentSet+1} / Round ${state.setRound}  •  ${state.currentRound} of ${state.maxRounds}`;
+  createCards();
+  targetName.textContent='???';
+  bombTimer.textContent='20';bombTimer.className='bomb-timer safe';
+  revealHint.classList.add('show');
+  state.revealTimer=setTimeout(()=>{revealHint.classList.remove('show');shufflePhase();},2500);
+}
+
+function shufflePhase(){
+  if(state.phase==='idle')return;
+  let count=0;
+  state.shuffleTimer=setInterval(()=>{
+    state.displayOrder=state.displayOrder.sort(()=>Math.random()-0.5);
+    repositionCards();
+    count++;
+    if(count>=6){clearInterval(state.shuffleTimer);huntPhase();}
+  },90);
+}
+
+function huntPhase(){
+  if(state.phase==='idle')return;
+  state.phase='playing';
+  targetName.textContent=CONCEPTS[state.currentTarget].name;
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(state.timer);
+  state.timeLeft=20;updateBombDisplay();
+  state.timer=setInterval(()=>{
+    state.timeLeft--;
+    if(state.timeLeft<=5)playTick();
+    updateBombDisplay();
+    if(state.timeLeft<=0){clearInterval(state.timer);bombExplodes();}
+  },1000);
+}
+
+function updateBombDisplay(){
+  bombTimer.textContent=state.timeLeft;
+  if(state.timeLeft>12)bombTimer.className='bomb-timer safe';
+  else if(state.timeLeft>6)bombTimer.className='bomb-timer warn';
+  else bombTimer.className='bomb-timer danger';
+}
+
+function cardClicked(ci,card){
+  if(state.phase!=='playing')return;
+  card.style.transform='translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1.15)';
+  card.style.borderColor='rgba(255,255,255,0.6)';
+  card.style.boxShadow='0 0 30px rgba(255,255,255,0.3),0 6px 25px rgba(0,0,0,0.4)';
+  setTimeout(()=>{
+    card.style.transform='';
+    card.style.borderColor='';
+    card.style.boxShadow='';
+  },250);
+}
+
+function bombExplodes(){
+  state.phase='exploded';
+  targetName.textContent='⏰ TIME\'S UP!';
+  bombTimer.textContent='0';
+  bombTimer.className='bomb-timer danger';
+  Object.values(cardEls).forEach(e=>e.classList.add('disabled'));
+}
+
+function showExplosion(){
+  explosionOverlay.classList.add('show');createParticles();
+  setTimeout(()=>explosionOverlay.classList.remove('show'),900);
+  const bi=document.querySelector('.bomb-icon');
+  if(bi)bi.textContent='💥';
+  setTimeout(()=>{const b=document.querySelector('.bomb-icon');if(b)b.textContent='💣';},1500);
+}
+
+function createParticles(){
+  particleContainer.innerHTML='';
+  const colors=['#ff1744','#ff9100','#ffea00','#ff6d00','#f44336','#ffab00'];
+  for(let i=0;i<40;i++){
+    const p=document.createElement('div');p.className='particle';
+    const s=4+Math.random()*12;
+    p.style.width=s+'px';p.style.height=s+'px';
+    p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    p.style.left=30+Math.random()*40+'%';p.style.top=30+Math.random()*40+'%';
+    const a=Math.random()*Math.PI*2,d=100+Math.random()*300;
+    p.style.setProperty('--tx',Math.cos(a)*d+'px');p.style.setProperty('--ty',Math.sin(a)*d+'px');
+    p.style.animationDuration=0.4+Math.random()*0.6+'s';
+    particleContainer.appendChild(p);
+  }
+  setTimeout(()=>particleContainer.innerHTML='',1500);
+}
+
+function showSetComplete(){
+  const si=state.currentSet;
+  if(si>=SETS.length-1){
+    state.phase='gameOver';
+    overlayTitle.textContent='🎉 GAME COMPLETE!';
+    overlaySub.textContent='GREAT JOB EVERYONE! 🏆';
+    overlayDesc.innerHTML=`All concepts found!<br><br>🏆 ROW 1: ${state.scores[0]} pts<br>🏆 ROW 2: ${state.scores[1]} pts<br>🏆 ROW 3: ${state.scores[2]} pts<br>🏆 ROW 4: ${state.scores[3]} pts`;
+    overlayBtn.textContent='🔄 PLAY AGAIN';
+    overlayBtn.onclick=resetGame;showOverlay();
+  }else{
+    overlayTitle.textContent='🎯 SET COMPLETE!';
+    overlaySub.innerHTML=`Set ${si+1} done! Moving to Set ${si+2}`;
+    overlayDesc.textContent='Get ready for the next set of pictures!';
+    overlayBtn.textContent='▶ NEXT SET';
+    overlayBtn.onclick=()=>{hideOverlay();state.targetedInSet=[];nextSet();};showOverlay();
+  }
+}
+
+function nextSet(){
+  state.currentSet++;state.targetedInSet=[];state.setRound=0;
+  resetCardStates();startRound();
+}
+
+function resetCardStates(){
+  Object.values(cardEls).forEach(e=>e.classList.remove('correct','wrong','disabled'));
+}
+
+function showOverlay(){overlay.classList.add('show')}
+function hideOverlay(){overlay.classList.remove('show')}
+
+function resetGame(){
+  state.currentSet=0;state.targetedInSet=[];state.currentTarget=null;state.displayOrder=[];
+  state.scores=[0,0,0,0];state.phase='idle';state.setRound=0;state.currentRound=0;
+  state.timeLeft=20;clearInterval(state.timer);clearInterval(state.shuffleTimer);clearTimeout(state.revealTimer);hideOverlay();
+  for(let i=0;i<4;i++)document.getElementById('score-'+i).textContent='0';
+  resetCardStates();targetName.textContent='—';
+  bombTimer.textContent='20';bombTimer.className='bomb-timer safe';
+  cardEls={};cardsContainer.innerHTML='';
+  setTimeout(()=>startRound(),300);
+}
+
+// ===== SCOREBOARD =====
+document.querySelectorAll('.plus-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    const row=parseInt(this.dataset.row);if(isNaN(row)||state.phase==='idle'||state.phase==='gameOver')return;
+    state.scores[row]++;document.getElementById('score-'+row).textContent=state.scores[row];
+    const el=this;el.style.transform='scale(1.3)';
+    setTimeout(()=>el.style.transform='',200);
+    if(state.phase==='reveal'||state.phase==='playing'||state.phase==='exploded'){
+      clearInterval(state.timer);clearInterval(state.shuffleTimer);clearTimeout(state.revealTimer);
+      revealHint.classList.remove('show');
+      state.targetedInSet.push(state.currentTarget);
+      const tc=cardEls[state.currentTarget];
+      if(tc){tc.classList.add('correct');}
+      targetName.textContent='✅ '+CONCEPTS[state.currentTarget].name+'!';
+      resetCardStates();
+      const si=getSetIndices(state.currentSet);
+      const rem=si.filter(i=>!state.targetedInSet.includes(i));
+      if(rem.length===0&&state.targetedInSet.length>=si.length){
+        if(state.currentSet>=SETS.length-1){showSetComplete();}
+        else{nextSet();}
+      }else{startRound();}
+    }
+  });
+});
+
+// ===== TOUCH SUPPORT =====
+document.addEventListener('touchstart',()=>{
+  if(!audioCtx)getAudioCtx();
+  if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
+},{once:true});
+
+// ===== START =====
+state.maxRounds=calcMaxRounds();
+showOverlay();
+overlayBtn.onclick=()=>{
+  hideOverlay();
+  if(state.phase==='gameOver')resetGame();
+  else startRound();
+};
+</script>
+</body>
+</html>
